@@ -1,7 +1,7 @@
 /**
- * KeycloakLogin Web Component
+ * KeycloakHandler Web Component
  *
- * This custom element provides a login button and handles authentication with Keycloak using the Keycloak JS adapter.
+ * This custom element handles authentication with Keycloak using the Keycloak JS adapter.
  *
  * Usage:
  *   <keycloak-handler id="kcHandler" url="..." realm="..." client-id="..."></keycloak-handler>
