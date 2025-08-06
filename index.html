@@ -17,16 +17,16 @@
         - client-id:  The Keycloak client ID (e.g. your-client-id)
 
       Example:
-        <keycloak-login
+        <keycloak-handler
           url="https://keycloak.yourDomain.de"
           realm="your-realm"
           client-id="your-client-id">
-        </keycloak-login>
+        </keycloak-handler>
     -->
-    <keycloak-login id="kcLogin" url="https://keycloak.yourDomain.de" realm="your-realm" client-id="your-client-id" />
+    <keycloak-handler id="kcHandler" url="https://keycloak.yourDomain.de" realm="your-realm" client-id="your-client-id" />
     <script type="module" src="./keycloak-handler.js"></script>
     <script type="module">
-        const kcLogin = document.getElementById('kcLogin');
+        const kcHandler = document.getElementById('kcHandler');
     </script>
 </body>
 

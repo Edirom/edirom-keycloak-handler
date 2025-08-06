@@ -4,7 +4,7 @@
  * This custom element provides a login button and handles authentication with Keycloak using the Keycloak JS adapter.
  *
  * Usage:
- *   <keycloak-login url="..." realm="..." client-id="..."></keycloak-login>
+ *   <keycloak-handler id="kcHandler" url="..." realm="..." client-id="..."></keycloak-handler>
  *
  * - Loads Keycloak JS as an ES6 module from /vendor/keycloak@26.2.0/lib/keycloak.js (must be present and ESM-compatible!)
  * - Initializes Keycloak with the given or default config
@@ -16,7 +16,7 @@
  *   - The Keycloak server and client must be configured for CORS and correct redirect URIs
  *
  * Minimal example:
- *   <keycloak-login></keycloak-login>
+ *   <keycloak-handler id="kcHandler"></keycloak-handler>
  */
 class KeycloakLogin extends HTMLElement {
     constructor() {
@@ -35,7 +35,7 @@ class KeycloakLogin extends HTMLElement {
         const clientId = this.getAttribute('client-id');
 
         if (!url || !realm || !clientId) {
-            console.warn('[keycloak-login] Missing required attribute(s):', {
+            console.warn('[keycloak-handler] Missing required attribute(s):', {
                 url,
                 realm,
                 clientId
@@ -65,21 +65,21 @@ class KeycloakLogin extends HTMLElement {
                 this.login();
             }
         }).catch((error) => {
-            console.error('[keycloak-login] Keycloak initialization failed:', error);
+            console.error('[keycloak-handler] Keycloak initialization failed:', error);
         });
     }
 
     async login() {
         if (this.keycloak.authenticated) {
-            console.info('[keycloak-login] User is already authenticated, no login required.');
+            console.info('[keycloak-handler] User is already authenticated, no login required.');
             return;
         }
         this.keycloak.login({
             redirectUri: window.location.href // Redirect after successful login
         }).catch((error) => {
-            console.error('[keycloak-login] Keycloak login failed:', error);
+            console.error('[keycloak-handler] Keycloak login failed:', error);
         });
     }
 }
 
-customElements.define('keycloak-login', KeycloakLogin);
+customElements.define('keycloak-handler', KeycloakLogin);
