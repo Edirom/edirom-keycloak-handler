@@ -33,6 +33,7 @@ class KeycloakLogin extends HTMLElement {
         const url = this.getAttribute('url');
         const realm = this.getAttribute('realm');
         const clientId = this.getAttribute('client-id');
+        const redirectUri = this.getAttribute('redirect-uri') || `${location.origin}/silent-check-sso.html`;
 
         if (!url || !realm || !clientId) {
             console.warn('[keycloak-handler] Missing required attribute(s):', {
@@ -57,7 +58,7 @@ class KeycloakLogin extends HTMLElement {
     async initKeycloak() {
         this.keycloak.init({
             onLoad: 'check-sso',
-            silentCheckSsoRedirectUri: `${location.origin}/silent-check-sso.html`
+            silentCheckSsoRedirectUri: redirectUri
         }).then((authenticated) => {
             if (authenticated) {
                 localStorage.setItem('keycloak_token', this.keycloak.token);
