@@ -51,11 +51,11 @@ class KeycloakLogin extends HTMLElement {
             } else {
                 this.keycloak = new Keycloak(keycloakProps);
             }
-            this.initKeycloak();
+            this.initKeycloak(redirectUri);
         }
     }
 
-    async initKeycloak() {
+    async initKeycloak(redirectUri) {
         this.keycloak.init({
             onLoad: 'check-sso',
             silentCheckSsoRedirectUri: redirectUri

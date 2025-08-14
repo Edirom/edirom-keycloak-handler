@@ -23,7 +23,7 @@
           client-id="your-client-id">
         </keycloak-handler>
     -->
-    <keycloak-handler id="kcHandler" url="https://keycloak.yourDomain.de" realm="your-realm" client-id="your-client-id" />
+    <keycloak-handler id="kcHandler" url="https://keycloak.yourDomain.de" realm="your-realm" client-id="your-client-id" redirect-uri="https://your.redirect.uri/silent-check-sso.html"></keycloak-handler>
     <script type="module" src="./keycloak-handler.js"></script>
     <script type="module">
         const kcHandler = document.getElementById('kcHandler');
