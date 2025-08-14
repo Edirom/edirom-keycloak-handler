@@ -45,7 +45,7 @@ class KeycloakLogin extends HTMLElement {
     
             if (!window.Keycloak) {
                 // Lokale ES6-Variante laden
-                const Keycloak = await import('/vendor/keycloak@26.2.0/lib/keycloak.js');
+                const Keycloak = await import('./vendor/keycloak@26.2.0/lib/keycloak.js');
                 this.keycloak = new Keycloak.default(keycloakProps);
             } else {
                 this.keycloak = new Keycloak(keycloakProps);
