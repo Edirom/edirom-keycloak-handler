@@ -61,7 +61,7 @@ class KeycloakLogin extends HTMLElement {
             silentCheckSsoRedirectUri: redirectUri
         }).then((authenticated) => {
             if (authenticated) {
-                localStorage.setItem('keycloak_token', this.keycloak.token);
+                document.cookie = `keycloak_token=${this.keycloak.token}; path=/; secure; SameSite=Lax`;
             } else {
                 this.login();
             }
