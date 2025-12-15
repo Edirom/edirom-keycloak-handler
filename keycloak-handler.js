@@ -18,69 +18,70 @@
  * Minimal example:
  *   <keycloak-handler id="kcHandler"></keycloak-handler>
  */
-class KeycloakLogin extends HTMLElement {
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.keycloak = null;
-    }
+if (!customElements.get('keycloak-handler')) {
+    class KeycloakLogin extends HTMLElement {
+        constructor() {
+            super();
+            this.attachShadow({ mode: 'open' });
+            this.keycloak = null;
+        }
 
-    connectedCallback() {
-        this.createKeycloak();
-    }
+        connectedCallback() {
+            this.createKeycloak();
+        }
 
-    async createKeycloak() {
-        const url = this.getAttribute('url');
-        const realm = this.getAttribute('realm');
-        const clientId = this.getAttribute('client-id');
-        const redirectUri = this.getAttribute('redirect-uri') || `${location.origin}/silent-check-sso.html`;
+        async createKeycloak() {
+            const url = this.getAttribute('url');
+            const realm = this.getAttribute('realm');
+            const clientId = this.getAttribute('client-id');
 
-        if (!url || !realm || !clientId) {
-            console.warn('[keycloak-handler] Missing required attribute(s):', {
-                url,
-                realm,
-                clientId
+            if (!url || !realm || !clientId) {
+                console.warn('[keycloak-handler] Missing required attribute(s):', {
+                    url,
+                    realm,
+                    clientId
+                });
+            } else {
+                const keycloakProps = { url, realm, clientId };
+
+                if (!window.Keycloak) {
+                    // Lokale ES6-Variante laden
+                    const Keycloak = await import('./vendor/keycloak@26.2.0/lib/keycloak.js');
+                    this.keycloak = new Keycloak.default(keycloakProps);
+                } else {
+                    this.keycloak = new Keycloak(keycloakProps);
+                }
+                this.initKeycloak();
+            }
+        }
+
+        async initKeycloak() {
+            this.keycloak.init({
+                onLoad: 'check-sso',
+                checkLoginIframe: false  // Disable iframe-based checks to avoid CSP issues
+            }).then((authenticated) => {
+                if (authenticated) {
+                    document.cookie = `keycloak_token=${this.keycloak.token}; path=/; secure; SameSite=Lax`;
+                } else {
+                    this.login();
+                }
+            }).catch((error) => {
+                console.error('[keycloak-handler] Keycloak initialization failed:', error);
             });
-        } else {
-            const keycloakProps = { url, realm, clientId };
-    
-            if (!window.Keycloak) {
-                // Lokale ES6-Variante laden
-                const Keycloak = await import('./vendor/keycloak@26.2.0/lib/keycloak.js');
-                this.keycloak = new Keycloak.default(keycloakProps);
-            } else {
-                this.keycloak = new Keycloak(keycloakProps);
+        }
+
+        async login() {
+            if (this.keycloak.authenticated) {
+                console.info('[keycloak-handler] User is already authenticated, no login required.');
+                return;
             }
-            this.initKeycloak(redirectUri);
+            this.keycloak.login({
+                redirectUri: window.location.href // Redirect after successful login
+            }).catch((error) => {
+                console.error('[keycloak-handler] Keycloak login failed:', error);
+            });
         }
     }
 
-    async initKeycloak(redirectUri) {
-        this.keycloak.init({
-            onLoad: 'check-sso',
-            silentCheckSsoRedirectUri: redirectUri
-        }).then((authenticated) => {
-            if (authenticated) {
-                document.cookie = `keycloak_token=${this.keycloak.token}; path=/; secure; SameSite=Lax`;
-            } else {
-                this.login();
-            }
-        }).catch((error) => {
-            console.error('[keycloak-handler] Keycloak initialization failed:', error);
-        });
-    }
-
-    async login() {
-        if (this.keycloak.authenticated) {
-            console.info('[keycloak-handler] User is already authenticated, no login required.');
-            return;
-        }
-        this.keycloak.login({
-            redirectUri: window.location.href // Redirect after successful login
-        }).catch((error) => {
-            console.error('[keycloak-handler] Keycloak login failed:', error);
-        });
-    }
+    customElements.define('keycloak-handler', KeycloakLogin);
 }
-
-customElements.define('keycloak-handler', KeycloakLogin);
