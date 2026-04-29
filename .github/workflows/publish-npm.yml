@@ -26,8 +26,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-    # Nur publishen wenn NPM_TOKEN Secret gesetzt ist
-    if: ${{ secrets.NPM_TOKEN != '' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -41,3 +39,4 @@ jobs:
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        continue-on-error: true
